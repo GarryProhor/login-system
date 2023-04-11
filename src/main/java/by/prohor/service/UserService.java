@@ -2,6 +2,7 @@ package by.prohor.service;
 
 import by.prohor.models.ApplicationUser;
 import by.prohor.models.Role;
+import by.prohor.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,16 +19,14 @@ public class UserService implements UserDetailsService {
     @Autowired
     private PasswordEncoder encoder;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         System.out.println("in the user details service");
 
-        if(!username.equals("Garry")) throw new UsernameNotFoundException("Not Garry");
-
-        Set<Role> roles = new HashSet<>();
-        roles.add(new Role(1, "USER"));
-
-        return new ApplicationUser(1, "Garry", encoder.encode("password"), roles);
+        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("user is not valid"));
     }
 }
